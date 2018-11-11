@@ -24,7 +24,7 @@ def getNames(file,number):
 	return nomes,matricula
 
 
-def gerarPDF(name,file):
+def gerarPDF(name):
 	command = 'inkscape --file=modificado.svg --export-area-drawing --without-gui --export-pdf='+name+'.pdf'
 	os.system(command)
 
