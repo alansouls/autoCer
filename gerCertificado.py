@@ -1,12 +1,7 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import sys
 import xlrd
 import os
-import commands
-
-
-
+import command
 
 
 def getNames(file,number):
@@ -17,31 +12,35 @@ def getNames(file,number):
 		nomes.append(sh.cell_value(rowx=i, colx=0))
 	matricula = []
 	for i in range(1,sh.nrows):
-		matricula.append(int(sh.cell_value(rowx=i, colx=2)))
+		matricula.append(sh.cell_value(rowx=i, colx=2))
 
-	
-	
-	return nomes,matricula
+	return nomes, matricula
 
 
-def gerarPDF(name):
-	command = 'inkscape --file=modificado.svg --export-area-drawing --without-gui --export-pdf='+name+'.pdf'
-	os.system(command)
+def gerarPNG(matricula,file,atividade):
+	if str(matricula).endswith('.0'):
+		matricula = str(matricula)[:-2]
+	output = str(matricula)+'-1.png';
+	os.system("inkscape --file="+file+" --export-area-drawing --without-gui --export-png="+output);
 
 def preencherCertificado(nome,matricula,atividade,cargaHor,file):
 	with open(file, 'r') as file:
 		filedata = file.read()
-
+	if str(matricula).endswith('.0'):
+		matricula = str(matricula)[:-2]
 	filedata = filedata.replace('_NOME_',nome)
 	filedata = filedata.replace('_MAT_', str(matricula))
 	filedata = filedata.replace('_ATIVIDADE_', atividade)
-	filedata = filedata.replace('_TEMPO_', cargaHor)
+	filedata = filedata.replace('_TEMPO_', str(cargaHor))
 	with open('modificado.svg', 'w') as file:
 		file.write(filedata)
 
-#example
-nomes,matriculas = getNames('file.xlsx',0)
+
+nomes,matricula = getNames('frequencia.xlsx',0);
 for i in range(len(nomes)):
-	preencherCertificado(nomes[i].encode('utf-8'), matriculas[i],'Minicurso de Octave','4','certificadoModelo.svg')
-	gerarPDF(str(matriculas[i])+'_0','modificado.svg')
-#example
+	preencherCertificado(nomes[i],matricula[i],'Minicurso Octave',4,'certificadoModelo.svg')
+	gerarPNG(matricula[i],'modificado.svg','Minicurso Octave')
+
+
+
+
